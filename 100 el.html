@@ -39,6 +39,9 @@
             width: 50px;
             height: 50px;
          }
+         .interactiveElement:hover {
+            cursor: grab;
+         }
       </style>
    </head>
 
@@ -47,8 +50,33 @@
       <div id="interactivePanel"></div>
       <script>
          let btn = document.querySelector('#generateButton')
-         let panel = document.querySelector('#interactivePanel')
+         let interactivePanel = document.querySelector('#interactivePanel')
+         let move = false
+         let offsetX, offsetY
+         let currentDiv
+         const genereteButtonHeight = parseInt(getComputedStyle(btn).height) // parseInt конвертирует строку с буквенными символами и числами в конце в число, например 100px в 100
          btn.addEventListener('click', setElement)
+
+         interactivePanel.addEventListener('mousedown', function (e) {
+            if (e.target.classList.contains('interactiveElement')) {
+               // обрабатываем событие только от элементаов с классом interactiveElement
+               move = true
+               offsetX = e.offsetX
+               offsetY = e.offsetY
+               currentDiv = e.target
+            }
+         })
+
+         interactivePanel.addEventListener('mousemove', function (e) {
+            if (move) {
+               currentDiv.style.top = e.clientY - offsetY - genereteButtonHeight + 'px'
+               currentDiv.style.left = e.clientX - offsetX + 'px'
+            }
+         })
+
+         interactivePanel.addEventListener('mouseup', function (e) {
+            move = false
+         })
 
          function generateElement() {
             let div = document.createElement('div')
@@ -74,9 +102,9 @@
          }
 
          function setElement() {
-            panel.innerHTML = ''
+            interactivePanel.innerHTML = ''
             for (let i = 0; i < 100; i++) {
-               panel.append(generateElement())
+               interactivePanel.append(generateElement())
             }
          }
       </script>
